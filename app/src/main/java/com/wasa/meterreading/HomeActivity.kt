@@ -23,8 +23,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var viewModelFactory: HomeViewModelFactory
     private var selectedDdrID = -1
     private var selectedJobID = -1
-    private lateinit var currentDdrList: List<DDRResponse.DDR>
-    private lateinit var currentJobs: List<RetrieveJobsResponse.RetrieveJobsResponse1Item>
+    private var currentDdrList: List<DDRResponse.DDR> = arrayListOf()
+    private var currentJobs: List<RetrieveJobsResponse.RetrieveJobsResponse1Item> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         try {
@@ -40,9 +40,13 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 btnFetch.setOnClickListener {
                     if (etConsumerCode.text.toString().trim().isEmpty())
                         Toast.makeText(this@HomeActivity, "Please enter consumer code", Toast.LENGTH_LONG).show()
-                    else if (selectedDdrID == -1)
-                        Toast.makeText(this@HomeActivity, "Please select DDR from dropdown", Toast.LENGTH_LONG).show()
-                    else
+                    else if (selectedDdrID == -1) {
+                        if (currentDdrList.isNotEmpty()) {
+                            selectedDdrID = currentDdrList[0].id
+                            receiverConsumer(etConsumerCode.text.toString(), selectedDdrID)
+                        } else
+                            Toast.makeText(this@HomeActivity, "Please select DDR from dropdown", Toast.LENGTH_LONG).show()
+                    } else
                         receiverConsumer(etConsumerCode.text.toString(), selectedDdrID)
                 }
                 btnUpload.setOnClickListener {
@@ -50,9 +54,13 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                         Toast.makeText(this@HomeActivity, "Please enter consumer code", Toast.LENGTH_LONG).show()
                     if (etRemarks.text.toString().trim().isEmpty())
                         Toast.makeText(this@HomeActivity, "Please write remarks", Toast.LENGTH_LONG).show()
-                    else if (selectedJobID == -1)
-                        Toast.makeText(this@HomeActivity, "Please select Reading", Toast.LENGTH_LONG).show()
-                    else
+                    else if (selectedJobID == -1) {
+                        if (currentJobs.isNotEmpty()) {
+                            selectedJobID = currentJobs[0].id
+                            uploadReading(etConsumerCode.text.toString(), etReading.text.toString().toInt(), selectedJobID, etRemarks.text.toString(), 33.366890, -80.313263)
+                        } else
+                            Toast.makeText(this@HomeActivity, "Please select Reading", Toast.LENGTH_LONG).show()
+                    } else
                         uploadReading(etConsumerCode.text.toString(), etReading.text.toString().toInt(), selectedJobID, etRemarks.text.toString(), 33.366890, -80.313263)
                 }
             }
@@ -216,7 +224,6 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         // On selecting a spinner item
         try {
-
             val item: String = parent?.getItemAtPosition(position).toString()
             for (ddr in currentDdrList) {
                 if (ddr.dDRDesc == item)
@@ -229,8 +236,8 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             }
             // Showing selected spinner item
             Toast.makeText(this@HomeActivity, "Selected: $item", Toast.LENGTH_LONG).show()
-        }catch (e:Exception){
-
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
