@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Wasa Meter Reading</string>
+    <string name="enter_user_name">Enter User Name</string>
+    <string name="enter_password">Enter password</string>
+    <string name="login">Login</string>
+    <string name="enter_consumer_code">Enter consumer code</string>
+    <string name="consumer_detail">Consumer Detail</string>
+    <string name="enter_remarks">Enter remarks</string>
+    <string name="enter_reading">Enter Reading</string>
+</resources>
