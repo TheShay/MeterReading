@@ -10,7 +10,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.wasa.meterreading"
+        applicationId "theshaybi.wasa.meterreading"
         minSdk 21
         targetSdk 32
         versionCode 1
