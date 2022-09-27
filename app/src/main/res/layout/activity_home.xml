@@ -11,10 +11,10 @@
         android:id="@+id/ddr_spinner"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="20dp"
         android:layout_marginLeft="10sp"
+        android:layout_marginTop="20dp"
         android:layout_marginRight="10sp"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,11 +23,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
+        android:background="@drawable/et_background"
         android:hint="@string/enter_consumer_code"
         android:inputType="number"
         android:text="65219436"
         android:textSize="24dp"
-        android:background="@drawable/et_background"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ddr_spinner" />
@@ -36,8 +36,8 @@
         android:id="@+id/btn_fetch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Fetch Details"
         android:layout_marginTop="10dp"
+        android:text="Fetch Details"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_consumer_code" />
@@ -47,9 +47,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20sp"
-        android:textSize="24dp"
         android:paddingLeft="5dp"
         android:text="@string/consumer_detail"
+        android:textSize="24dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_fetch" />
@@ -58,8 +58,8 @@
         android:id="@+id/jobs_spinner"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_consumer_detail" />
 
@@ -67,28 +67,57 @@
         android:id="@+id/et_reading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/enter_reading"
-        android:background="@drawable/et_background"
-        android:inputType="number"
-        android:minLines="3"
-        android:maxLines="5"
         android:layout_marginTop="50sp"
+        android:background="@drawable/et_background"
+        android:hint="@string/enter_reading"
+        android:inputType="number"
+        android:maxLines="5"
+        android:minLines="3"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/jobs_spinner" />
+
     <EditText
         android:id="@+id/et_remarks"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/enter_remarks"
-        android:background="@drawable/et_background"
-        android:inputType="text"
-        android:minLines="3"
-        android:maxLines="5"
         android:layout_marginTop="20sp"
+        android:background="@drawable/et_background"
+        android:hint="@string/enter_remarks"
+        android:inputType="text"
+        android:maxLines="5"
+        android:minLines="3"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_reading" />
+
+    <LinearLayout
+        android:id="@+id/ll_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="5sp"
+        android:weightSum="2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_remarks">
+
+        <ImageView
+            android:id="@+id/iv_pic"
+            android:layout_width="80sp"
+            android:layout_height="80sp"
+            android:layout_marginEnd="10sp"
+            android:layout_weight="1"
+            android:src="@drawable/logo" />
+
+        <Button
+            android:id="@+id/btn_select"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.9"
+            android:text="Select Image" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/btn_upload"
@@ -98,6 +127,6 @@
         android:text="Upload Reading"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_remarks" />
+        app:layout_constraintTop_toBottomOf="@+id/ll_image" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
