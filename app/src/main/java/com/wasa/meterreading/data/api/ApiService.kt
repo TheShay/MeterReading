@@ -21,6 +21,7 @@ interface ApiService {
         @Field("js_id") jsId: Int,
         @Field("reading") reading: Int,
         @Field("Remarks") Remarks: String,
+        @Field("image") image: String,
         @Field("Lat") Lat: Double,
         @Field("Lng") Lng: Double,
     ): UploadReadingResponse

@@ -1,20 +1,21 @@
 package com.wasa.meterreading
 
-import android.R
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.util.Base64
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Base64
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Toast
+import android.view.Window
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
@@ -79,15 +80,18 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     else if (selectedJobID == -1) {
                         if (currentJobs.isNotEmpty()) {
                             selectedJobID = currentJobs[0].id
-                            uploadReading(etConsumerCode.text.toString(), etReading.text.toString().toInt(), selectedJobID, etRemarks.text.toString(), 33.366890, -80.313263)
+                            uploadReading(etConsumerCode.text.toString(), etReading.text.toString().toInt(), selectedJobID, etRemarks.text.toString(), img_str, 33.366890, -80.313263)
                         } else
                             Toast.makeText(this@HomeActivity, "Please select Reading", Toast.LENGTH_LONG).show()
                     } else
-                        uploadReading(etConsumerCode.text.toString(), etReading.text.toString().toInt(), selectedJobID, etRemarks.text.toString(), 33.366890, -80.313263)
+                        uploadReading(etConsumerCode.text.toString(), etReading.text.toString().toInt(), selectedJobID, etRemarks.text.toString(), img_str, 33.366890, -80.313263)
                 }
 
                 btnSelect.setOnClickListener {
                     dispatchTakePictureIntent()
+                }
+                ivPic.setOnClickListener {
+                    showQRDialog()
                 }
             }
 
@@ -119,10 +123,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                             }
 
                             // Creating adapter for spinner
-                            val dataAdapter: ArrayAdapter<String> = ArrayAdapter<String>(this, R.layout.simple_spinner_item, ddrList)
+                            val dataAdapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, ddrList)
 
                             // Drop down layout style - list view with radio button
-                            dataAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+                            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
                             // attaching data adapter to spinner
                             binding.ddrSpinner.adapter = dataAdapter
@@ -159,10 +163,10 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                             }
 
                             // Creating adapter for spinner
-                            val dataAdapter: ArrayAdapter<String> = ArrayAdapter<String>(this, R.layout.simple_spinner_item, jobList)
+                            val dataAdapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, jobList)
 
                             // Drop down layout style - list view with radio button
-                            dataAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+                            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
                             // attaching data adapter to spinner
                             binding.jobsSpinner.adapter = dataAdapter
@@ -211,9 +215,39 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         }
     }
 
-    private fun uploadReading(consumerCode: String, reading: Int, jsId: Int, remarks: String, latitude: Double, longitude: Double) {
+    fun showQRDialog() {
         try {
-            viewModel.uploadReading(consumerCode, reading, jsId, remarks, latitude, longitude).observe(this) {
+            val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val layout: View = inflater.inflate(R.layout.dialog_qr, null)
+            val thisDialog = Dialog(this)
+            thisDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            thisDialog.setContentView(layout)
+            thisDialog.window!!.decorView.setBackgroundResource(R.color.transparent)
+            thisDialog.setCancelable(false)
+            val iv_qr = layout.findViewById<ImageView>(R.id.iv_qr)
+            val decodedString: ByteArray = Base64.decode(img_str, Base64.DEFAULT)
+            val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+            iv_qr.setImageBitmap(decodedByte)
+            val btnCLOSE = layout.findViewById<Button>(R.id.btnCLOSE)
+            btnCLOSE.setOnClickListener { v: View? ->
+                thisDialog.dismiss()
+            }
+            val btnRESET = layout.findViewById<Button>(R.id.btnRESET)
+            btnRESET.visibility = View.VISIBLE
+            btnRESET.setOnClickListener { v: View? ->
+                thisDialog.dismiss()
+                img_str = ""
+                binding.ivPic.setImageBitmap(null)
+            }
+            if (img_str.isNotEmpty()) thisDialog.show()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun uploadReading(consumerCode: String, reading: Int, jsId: Int, remarks: String, image: String, latitude: Double, longitude: Double) {
+        try {
+            viewModel.uploadReading(consumerCode, jsId, reading, remarks, image, latitude, longitude).observe(this) {
                 it?.let { resource ->
                     when (resource.status) {
                         Status.SUCCESS -> {
@@ -312,28 +346,32 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     private fun dispatchTakePictureIntent() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(packageManager) != null) {
-            // Create the File where the photo should go
-            var photoFile: File? = null
-            try {
-                photoFile = createImageFile()
-            } catch (ex: IOException) {
-                // Error occurred while creating the File
-                ex.printStackTrace()
+        try {
+            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            // Ensure that there's a camera activity to handle the intent
+            if (takePictureIntent.resolveActivity(packageManager) != null) {
+                // Create the File where the photo should go
+                var photoFile: File? = null
+                try {
+                    photoFile = createImageFile()
+                } catch (ex: IOException) {
+                    // Error occurred while creating the File
+                    ex.printStackTrace()
+                }
+                // Continue only if the File was successfully created
+                if (photoFile != null) {
+                    outPutfileUri = FileProvider.getUriForFile(
+                        this,
+                        "theshaybi.wasa.meterreader",
+                        photoFile
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, outPutfileUri)
+                    takePictureIntent.putExtra("android.intent.extras.CAMERA_FACING", 1)
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                }
             }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                outPutfileUri = FileProvider.getUriForFile(
-                    this,
-                    "com.example.android.fileprovider",
-                    photoFile
-                )
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, outPutfileUri)
-                takePictureIntent.putExtra("android.intent.extras.CAMERA_FACING", 1)
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -365,7 +403,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-              //Bundle extras = data.getExtras();
+                //Bundle extras = data.getExtras();
 //            Bitmap imageBitmap = (Bitmap) extras.get("data");
 //            profile_image.setImageBitmap(imageBitmap);
 //            ByteArrayOutputStream stream = new ByteArrayOutputStream();

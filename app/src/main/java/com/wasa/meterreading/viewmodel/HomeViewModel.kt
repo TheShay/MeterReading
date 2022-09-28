@@ -28,10 +28,10 @@ class HomeViewModel(private val mainRepository: MainRepository) : ViewModel() {
         }
     }
 
-    fun uploadReading(consumerCode: String, jsId: Int, reading: Int, remarks: String, lat: Double, long: Double) = liveData(Dispatchers.IO) {
+    fun uploadReading(consumerCode: String, jsId: Int, reading: Int, remarks: String, image: String, lat: Double, long: Double) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
-            emit(Resource.success(data = mainRepository.uploadReading(consumerCode, jsId, reading, remarks, lat, long)))
+            emit(Resource.success(data = mainRepository.uploadReading(consumerCode, jsId, reading, remarks, image, lat, long)))
         } catch (e: Exception) {
             val exception = "[Exception in DetectorViewModel:uploadReading] [${e.localizedMessage}]".trimIndent()
             emit(Resource.error(data = null, message = e.message ?: "Error Occurred!"))
