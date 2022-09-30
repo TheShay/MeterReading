@@ -8,4 +8,5 @@
     <string name="enter_remarks">Enter remarks</string>
     <string name="enter_reading">Enter Reading</string>
     <string name="done">Done</string>
+    <string name="cancel">Cancel</string>
 </resources>

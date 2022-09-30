@@ -17,6 +17,7 @@ import android.view.View
 import android.view.Window
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import com.wasa.meterreading.data.api.ApiHelper
@@ -46,12 +47,21 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     val REQUEST_IMAGE_CAPTURE = 1
     var img_str = ""
     var outPutfileUri: Uri? = null
+    private var gpsTracker: GPSTracker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         try {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             super.onCreate(savedInstanceState)
             binding = ActivityHomeBinding.inflate(layoutInflater)
             setContentView(binding.root)
+
+            //Gps initialization
+            if (gpsTracker == null || gpsTracker!!.location == null) gpsTracker = GPSTracker(this)
+            with(gpsTracker) {
+                if (this!!.getIsGPSTrackingEnabled()) this.getLocation()
+                else this.showSettingsAlert()
+            }
 
             // Spinner click listener
             binding.ddrSpinner.onItemSelectedListener = this
@@ -80,11 +90,11 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     else if (selectedJobID == -1) {
                         if (currentJobs.isNotEmpty()) {
                             selectedJobID = currentJobs[0].id
-                            uploadReading(etConsumerCode.text.toString(), etReading.text.toString().toInt(), selectedJobID, etRemarks.text.toString(), img_str, 33.366890, -80.313263)
+                            uploadReading(etConsumerCode.text.toString(), etReading.text.toString().toInt(), selectedJobID, etRemarks.text.toString(), img_str, gpsTracker!!.getLatitude(), gpsTracker!!.getLongitude())
                         } else
                             Toast.makeText(this@HomeActivity, "Please select Reading", Toast.LENGTH_LONG).show()
                     } else
-                        uploadReading(etConsumerCode.text.toString(), etReading.text.toString().toInt(), selectedJobID, etRemarks.text.toString(), img_str, 33.366890, -80.313263)
+                        uploadReading(etConsumerCode.text.toString(), etReading.text.toString().toInt(), selectedJobID, etRemarks.text.toString(), img_str, gpsTracker!!.getLatitude(), gpsTracker!!.getLongitude())
                 }
 
                 btnSelect.setOnClickListener {
@@ -215,7 +225,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         }
     }
 
-    fun showQRDialog() {
+    private fun showQRDialog() {
         try {
             val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val layout: View = inflater.inflate(R.layout.dialog_qr, null)
