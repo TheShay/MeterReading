@@ -1,6 +1,7 @@
 package com.wasa.meterreading
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -16,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.FileProvider
@@ -33,7 +35,6 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var binding: ActivityHomeBinding
@@ -450,5 +451,27 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
         Toast.makeText(this@HomeActivity, "No Selected", Toast.LENGTH_LONG).show()
+    }
+
+    override fun onBackPressed() {
+        try {
+            //super.onBackPressed()
+
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Logout")
+            builder.setMessage("Do you want to log-out")
+            // add the buttons
+            builder.setPositiveButton("Okay") { dialog: DialogInterface, which: Int ->
+                run {
+                    dialog.dismiss()
+                    viewModel.logout()
+                }
+            }
+            builder.setNegativeButton("Cancel") { dialog: DialogInterface, which: Int -> dialog.dismiss() }
+            builder.create().show()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

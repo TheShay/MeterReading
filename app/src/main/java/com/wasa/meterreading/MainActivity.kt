@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity() {
                             val loginResponse = it
                             Utils.AUTH_TOKEN = loginResponse.data?.result!!.token
                             startActivity(Intent(this@MainActivity, HomeActivity::class.java))
+                            finish()
                             //progressBar.visibility = View.GONE
                         }
                         Status.ERROR -> {

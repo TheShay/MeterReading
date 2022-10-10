@@ -8,7 +8,7 @@ import com.wasa.meterreading.utils.Resource
 import kotlinx.coroutines.*
 
 class HomeViewModel(private val mainRepository: MainRepository) : ViewModel() {
-    fun logout(affiliateID: String) = liveData(Dispatchers.IO) {
+    fun logout() = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
             emit(Resource.success(data = mainRepository.getLogout()))
