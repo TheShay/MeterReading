@@ -453,6 +453,34 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         Toast.makeText(this@HomeActivity, "No Selected", Toast.LENGTH_LONG).show()
     }
 
+    private fun logOutUser() {
+        try {
+            viewModel.logout().observe(this) {
+                it?.let { resource ->
+                    when (resource.status) {
+                        Status.SUCCESS -> {
+                            //progressBar.visibility = View.GONE
+                            Toast.makeText(this@HomeActivity, it.message, Toast.LENGTH_LONG).show()
+
+                            if (it.data?.success!!)
+                                startActivity(Intent(this@HomeActivity, MainActivity::class.java))
+                        }
+                        Status.ERROR -> {
+                            //progressBar.visibility = View.GONE
+                            Toast.makeText(this@HomeActivity, "Error in logOutUser :${it.message.toString()}", Toast.LENGTH_LONG).show()
+                        }
+                        Status.LOADING -> {
+                            //progressBar.visibility = View.VISIBLE
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            val exception = "[Exception in HomeActivity:logOutUser] [${e.localizedMessage}]".trimIndent()
+            Toast.makeText(this@HomeActivity, exception, Toast.LENGTH_LONG).show()
+        }
+    }
+
     override fun onBackPressed() {
         try {
             //super.onBackPressed()
@@ -464,7 +492,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             builder.setPositiveButton("Okay") { dialog: DialogInterface, which: Int ->
                 run {
                     dialog.dismiss()
-                    viewModel.logout()
+                    logOutUser()
                 }
             }
             builder.setNegativeButton("Cancel") { dialog: DialogInterface, which: Int -> dialog.dismiss() }

@@ -15,7 +15,7 @@ data class ReceiveConsumerResponse(
         @SerializedName("AndroidCode")
         val androidCode: Int,
         @SerializedName("Meter#")
-        val meter: Int,
+        val meter: String,
         @SerializedName("Name")
         val name: String
     )
