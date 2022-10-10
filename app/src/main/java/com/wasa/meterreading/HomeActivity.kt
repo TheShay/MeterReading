@@ -263,22 +263,7 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     when (resource.status) {
                         Status.SUCCESS -> {
                             //progressBar.visibility = View.GONE
-                            binding.apply {
-                                etConsumerCode.isEnabled = true
-                                etConsumerCode.text.clear()
-                                etRemarks.text.clear()
-                                etReading.text.clear()
-                                tvConsumerDetail.text = "Customer Detail"
-                                img_str = ""
-                                /*val icon = BitmapFactory.decodeResource(
-                                    this@HomeActivity.resources,
-                                    R.drawable.logo
-                                )*/
-                                ivPic.setImageBitmap(null)
-                            }
-
-                            selectedJobID = -1
-                            selectedDdrID = -1
+                            resetData()
                             val uploaded = it
                             Toast.makeText(this@HomeActivity, uploaded.data?.result, Toast.LENGTH_LONG).show()
                         }
@@ -296,6 +281,25 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             val exception = "[Exception in HomeActivity:uploadReading] [${e.localizedMessage}]".trimIndent()
             Toast.makeText(this@HomeActivity, exception, Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun resetData() {
+        binding.apply {
+            etConsumerCode.isEnabled = true
+            etConsumerCode.text.clear()
+            etRemarks.text.clear()
+            etReading.text.clear()
+            tvConsumerDetail.text = "Customer Detail"
+            img_str = ""
+            /*val icon = BitmapFactory.decodeResource(
+                                    this@HomeActivity.resources,
+                                    R.drawable.logo
+                                )*/
+            ivPic.setImageBitmap(null)
+        }
+
+        selectedJobID = -1
+        selectedDdrID = -1
     }
 
     @Throws(IOException::class)
@@ -492,7 +496,9 @@ class HomeActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             builder.setPositiveButton("Okay") { dialog: DialogInterface, which: Int ->
                 run {
                     dialog.dismiss()
-                    logOutUser()
+                    resetData()
+                    startActivity(Intent(this@HomeActivity, MainActivity::class.java))
+                    //logOutUser()
                 }
             }
             builder.setNegativeButton("Cancel") { dialog: DialogInterface, which: Int -> dialog.dismiss() }
